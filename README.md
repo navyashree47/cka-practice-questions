@@ -50,8 +50,8 @@ The node could be in any clusters that are currently configured on the student-n
    Solution:
      Inspect the kubeadm-config ConfigMap in the kube-system namespace.To identify the Pod CIDR network of the controlplane node in the Kubernetes cluster, use the following command:
 
-     kubectl get node controlplane -o jsonpath='{.spec.podCIDR}' > /root/pod-cidr.txt
-     cat /root/pod-cidr.txt
+       kubectl get node controlplane -o jsonpath='{.spec.podCIDR}' > /root/pod-cidr.txt
+       cat /root/pod-cidr.txt
      
 
 
