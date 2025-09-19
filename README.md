@@ -45,4 +45,14 @@ The node could be in any clusters that are currently configured on the student-n
     sysctl -p
 
 
+4. While preparing to install a CNI plugin on your kubernetes cluster, you would typically want to identify the pod CIDR networks for your nodes. Identify the pod CIDR network of controlplane node in the kubernetes cluster. Output the pod CIDR network following the format x.x.x.x/x to a file at /root/pod-cidr.txt.
+
+   Solution:
+     Inspect the kubeadm-config ConfigMap in the kube-system namespace.To identify the Pod CIDR network of the controlplane node in the Kubernetes cluster, use the following command:
+
+     kubectl get node controlplane -o jsonpath='{.spec.podCIDR}' > /root/pod-cidr.txt
+     cat /root/pod-cidr.txt
+     
+
+
  
