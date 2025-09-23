@@ -52,7 +52,58 @@ The node could be in any clusters that are currently configured on the student-n
 
        kubectl get node controlplane -o jsonpath='{.spec.podCIDR}' > /root/pod-cidr.txt
        cat /root/pod-cidr.txt
-     
 
 
+5. We have deployed a new pod called np-test-1 and a service called np-test-service. Incoming connections to this service are not working. Troubleshoot and fix it.
+Create NetworkPolicy, by the name ingress-to-nptest that allows incoming connections to the service over port 80.
+Important: Don't delete any current objects deployed.
+
+    Solutions:
+       
+
+              apiVersion: networking.k8s.io/v1
+              kind: NetworkPolicy
+              metadata:
+                name: ingress-to-nptest
+                namespace: default
+              spec:
+                podSelector:
+                  matchLabels:
+                    run: np-test-1
+                policyTypes:
+                - Ingress
+                ingress:
+                - ports:
+                  - protocol: TCP
+                    port: 80
+
+
+6. Configure the web-route to split traffic between web-service and web-service-v2.The configuration should ensure that 80% of the traffic is routed to web-service and 20% is routed to web-service-v2.
+Note: web-gateway, web-service, and web-service-v2 have already been created and are available on the cluster.
+
+   Solution:
+
+              kubectl create -n default -f - <<EOF
+              apiVersion: gateway.networking.k8s.io/v1
+              kind: HTTPRoute
+              metadata:
+                name: web-route
+                namespace: default
+              spec:
+                parentRefs:
+                  - name: web-gateway
+                    namespace: default
+                rules:
+                  - matches:
+                      - path:
+                          type: PathPrefix
+                          value: /
+                    backendRefs:
+                      - name: web-service
+                        port: 80
+                        weight: 80
+                      - name: web-service-v2
+                        port: 80
+                        weight: 20
+              EOF
  
